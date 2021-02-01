@@ -1,0 +1,25 @@
+@import 'RecipeList.css';
+@import 'Recipe.css';
+@import 'RecipeEdit.css';
+@import 'IngredientList.css';
+@import 'buttons.css';
+
+*,
+*::before,
+*::after {
+	font-family: 'Rubik', sans-serif;
+	box-sizing: border-box;
+}
+
+html {
+	font-size: 25px;
+}
+
+body {
+	padding: 0;
+	margin: 0;
+}
+
+.mr-1 {
+	margin-right: 5px;
+}
