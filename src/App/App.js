@@ -8,7 +8,11 @@ export const RecipeContext = createContext();
 const LOCAL_STORAGE_KEY = 'cookingWithReact.recipes';
 
 function App() {
+	const [selectedRecipeId, setSelectedRecipeId] = useState();
 	const [recipes, setRecipes] = useState(sampleRecipes);
+	const selectedRecipe = recipes.find(
+		(recipe) => recipe.id === selectedRecipeId
+	);
 
 	useEffect(() => {
 		const recipeJSON = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -18,42 +22,58 @@ function App() {
 	}, []);
 
 	useEffect(() => {
-		console.log('Rendered');
 		localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(recipes));
 	}, [recipes]);
 
 	const handleRecipeAdd = () => {
 		const newRecipe = {
 			id: uuidv4(),
-			name: 'New',
+			name: '',
 			servings: 1,
-			cookTime: '1:00',
-			instructions: 'instructions',
+			cookTime: '',
+			instructions: '',
 			ingredients: [
 				{
 					id: uuidv4(),
-					name: 'Name',
-					amount: '1 Tbs',
+					name: '',
+					amount: '',
 				},
 			],
 		};
 
+		setSelectedRecipeId(newRecipe.id);
 		setRecipes([...recipes, newRecipe]);
 	};
 
 	const handleRecipeDelete = (id) => {
+		if (selectedRecipeId != null && selectedRecipeId === id) {
+			setSelectedRecipeId(undefined);
+		}
 		setRecipes(recipes.filter((recipe) => recipe.id !== id));
+	};
+
+	const handleRecipeSelect = (id) => {
+		setSelectedRecipeId(id);
+	};
+
+	const handleRecipeChange = (id, recipe) => {
+		const newRecipes = [...recipes];
+		const index = newRecipes.findIndex((r) => r.id === id);
+		newRecipes[index] = recipe;
+		setRecipes(newRecipes);
 	};
 
 	const recipeContextValue = {
 		handleRecipeAdd,
 		handleRecipeDelete,
+		handleRecipeSelect,
+		handleRecipeChange,
 	};
 
 	return (
 		<RecipeContext.Provider value={recipeContextValue}>
 			<RecipeList recipes={recipes} />
-			<RecipeEdit />
+			{selectedRecipe && <RecipeEdit recipe={selectedRecipe} />}
 		</RecipeContext.Provider>
 	);
 }
